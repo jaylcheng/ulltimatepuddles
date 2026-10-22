@@ -198,20 +198,23 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 40px;
+    padding: 15px 30px;
     z-index: 60;
   }
   .hud-box {
     background: rgba(10, 5, 25, 0.8);
     border: 2px solid #00f0ff;
     border-radius: 12px;
-    padding: 12px 28px;
-    font-size: 22px;
+    padding: 10px 20px;
+    font-size: 18px;
     font-weight: 900;
     color: #fff;
     text-shadow: 0 0 10px #00f0ff;
     box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
-    letter-spacing: 2px;
+    letter-spacing: 1.5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
   }
   .timer-box.urgent {
     color: #ff003c;
@@ -229,6 +232,24 @@
     color: #ffe600;
     border-color: #ffe600;
     text-shadow: 0 0 10px #ffe600;
+  }
+
+  /* Rank Badge Displays */
+  .rank-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .rank-icon-svg {
+    width: 32px;
+    height: 32px;
+    filter: drop-shadow(0 0 8px currentColor);
+  }
+  .rank-icon-lg {
+    width: 90px;
+    height: 90px;
+    filter: drop-shadow(0 0 20px currentColor);
+    margin: 10px auto;
   }
 
   /* Instruction hint */
@@ -271,44 +292,62 @@
     background: rgba(15, 8, 30, 0.95);
     border: 3px solid #00f0ff;
     border-radius: 20px;
-    padding: 40px 60px;
+    padding: 30px 50px;
     text-align: center;
     box-shadow: 0 0 50px #00f0ff, inset 0 0 20px rgba(0, 240, 255, 0.3);
-    max-width: 600px;
+    max-width: 620px;
+    width: 90%;
   }
   .screen-box h1 {
     color: #ff007f;
     font-family: 'Press Start 2P', cursive;
-    font-size: 26px;
-    margin-bottom: 15px;
+    font-size: 24px;
+    margin-bottom: 12px;
     text-shadow: 0 0 15px #ff007f, 3px 3px 0 #000;
     line-height: 1.4;
   }
   .screen-box h2 {
     color: #00f0ff;
-    font-size: 20px;
-    margin-bottom: 20px;
+    font-size: 18px;
+    margin-bottom: 15px;
     text-shadow: 0 0 10px #00f0ff;
   }
   .screen-box p {
     color: #a0a0d0;
-    font-size: 16px;
-    margin-bottom: 25px;
-    line-height: 1.6;
+    font-size: 15px;
+    margin-bottom: 20px;
+    line-height: 1.5;
   }
   .final-score {
     font-family: 'Press Start 2P', cursive;
-    font-size: 48px;
+    font-size: 40px;
     color: #ffe600;
     text-shadow: 0 0 20px #ffe600, 4px 4px 0 #000;
-    margin: 20px 0;
+    margin: 10px 0;
   }
+
+  /* RP Change Animation */
+  .rp-change {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 20px;
+    margin: 10px 0 15px;
+    animation: rp-pop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  }
+  .rp-gain { color: #00ff66; text-shadow: 0 0 15px #00ff66; }
+  .rp-loss { color: #ff003c; text-shadow: 0 0 15px #ff003c; }
+
+  @keyframes rp-pop {
+    0% { transform: scale(0.3); opacity: 0; }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
   .btn {
     background: linear-gradient(45deg, #ff007f, #7928ca);
     color: white;
     border: none;
-    padding: 18px 50px;
-    font-size: 22px;
+    padding: 16px 45px;
+    font-size: 20px;
     font-family: 'Orbitron', sans-serif;
     font-weight: 900;
     border-radius: 50px;
@@ -319,7 +358,7 @@
     letter-spacing: 2px;
   }
   .btn:hover {
-    transform: scale(1.1);
+    transform: scale(1.08);
     box-shadow: 0 0 45px #ff007f, 0 0 70px #ff007f;
   }
 
@@ -337,6 +376,10 @@
   <!-- HUD -->
   <div class="hud">
     <div class="hud-box timer-box" id="timer">TIME: 20</div>
+    <div class="hud-box rank-box" id="hud-rank">
+      <span id="hud-rank-icon"></span>
+      <span id="hud-rank-title">BRONZE (0 RP)</span>
+    </div>
     <div class="hud-box combo-box" id="combo">COMBO: x1</div>
     <div class="hud-box score-box" id="score">SCORE: 0</div>
   </div>
@@ -354,8 +397,11 @@
   <div class="screen-overlay" id="start-screen">
     <div class="screen-box">
       <h1>PEPPA PIG:<br>NEON OVERDRIVE</h1>
-      <h2>HIGH-SPEED MUDDY PUDDLES</h2>
-      <p>⚡ Tap Peppa, then target glowing plasma pools rapidly!<br>⚡ Avoid rotating red hazards!<br>⚡ Build combo streak multipliers for massive points!</p>
+      <div id="start-rank-display">
+        <div id="start-rank-icon" class="rank-icon-lg"></div>
+        <h2 id="start-rank-title">CURRENT RANK: BRONZE (0 RP)</h2>
+      </div>
+      <p>⚡ Tap Peppa, then target glowing plasma pools rapidly!<br>⚡ Avoid rotating red hazards!<br>⚡ Build combo streak multipliers & gain RP to reach OVERLORD!</p>
       <button class="btn" id="start-btn">ENGAGE!</button>
     </div>
   </div>
@@ -364,7 +410,10 @@
   <div class="screen-overlay hidden" id="end-screen">
     <div class="screen-box">
       <h1>OVERDRIVE COMPLETE</h1>
+      <div id="end-rank-icon" class="rank-icon-lg"></div>
       <div class="final-score" id="final-score">0</div>
+      <div id="rp-change-text" class="rp-change"></div>
+      <h2 id="end-rank-title">NEW RANK: BRONZE</h2>
       <p id="end-message">SYSTEM PERFORMANCE EVALUATED</p>
       <button class="btn" id="restart-btn">REBOOT!</button>
     </div>
@@ -372,6 +421,35 @@
 </div>
 
 <script>
+// --- RANK SYSTEM TIER DEFINITIONS & SVG ICONS ---
+const TIER_DEFS = [
+  { name: "BRONZE", minRP: 0, color: "#cd7f32", icon: `<svg viewBox="0 0 100 100" class="rank-icon-svg" style="color:#cd7f32"><polygon points="50,10 90,85 10,85" fill="none" stroke="currentColor" stroke-width="8"/><circle cx="50" cy="55" r="18" fill="currentColor"/></svg>` },
+  { name: "SILVER", minRP: 300, color: "#c0c0c0", icon: `<svg viewBox="0 0 100 100" class="rank-icon-svg" style="color:#c0c0c0"><rect x="20" y="20" width="60" height="60" fill="none" stroke="currentColor" stroke-width="8" transform="rotate(45 50 50)"/><circle cx="50" cy="50" r="15" fill="currentColor"/></svg>` },
+  { name: "GOLD", minRP: 700, color: "#ffd700", icon: `<svg viewBox="0 0 100 100" class="rank-icon-svg" style="color:#ffd700"><polygon points="50,5 63,35 95,38 71,60 78,92 50,75 22,92 29,60 5,38 37,35" fill="currentColor"/></svg>` },
+  { name: "PLATINUM", minRP: 1200, color: "#00f0ff", icon: `<svg viewBox="0 0 100 100" class="rank-icon-svg" style="color:#00f0ff"><polygon points="50,5 90,30 90,70 50,95 10,70 10,30" fill="none" stroke="currentColor" stroke-width="8"/><polygon points="50,20 75,35 75,65 50,80 25,65 25,35" fill="currentColor"/></svg>` },
+  { name: "DIAMOND", minRP: 1800, color: "#ff007f", icon: `<svg viewBox="0 0 100 100" class="rank-icon-svg" style="color:#ff007f"><polygon points="50,5 95,50 50,95 5,50" fill="none" stroke="currentColor" stroke-width="8"/><polygon points="50,20 80,50 50,80 20,50" fill="currentColor"/></svg>` },
+  { name: "MASTER", minRP: 2500, color: "#a855f7", icon: `<svg viewBox="0 0 100 100" class="rank-icon-svg" style="color:#a855f7"><path d="M10,80 L30,20 L50,60 L70,20 L90,80 Z" fill="none" stroke="currentColor" stroke-width="8"/><circle cx="30" cy="20" r="8" fill="currentColor"/><circle cx="70" cy="20" r="8" fill="currentColor"/><circle cx="50" cy="60" r="8" fill="currentColor"/></svg>` },
+  { name: "GRANDMASTER", minRP: 3300, color: "#ff8c00", icon: `<svg viewBox="0 0 100 100" class="rank-icon-svg" style="color:#ff8c00"><polygon points="50,5 65,30 95,30 70,52 80,82 50,62 20,82 30,52 5,30 35,30" fill="none" stroke="currentColor" stroke-width="6"/><circle cx="50" cy="45" r="16" fill="currentColor"/></svg>` },
+  { name: "OVERLORD", minRP: 4200, color: "#ff003c", icon: `<svg viewBox="0 0 100 100" class="rank-icon-svg" style="color:#ff003c"><path d="M50,5 L90,25 L90,75 L50,95 L10,75 L10,25 Z" fill="none" stroke="currentColor" stroke-width="6"/><path d="M30,35 L50,15 L70,35 L60,70 L40,70 Z" fill="currentColor"/><circle cx="50" cy="45" r="8" fill="#ffe600"/></svg>` }
+];
+
+function getRankFromRP(rp) {
+  let rank = TIER_DEFS[0];
+  for (let tier of TIER_DEFS) {
+    if (rp >= tier.minRP) rank = tier;
+  }
+  return rank;
+}
+
+function loadRP() {
+  const saved = localStorage.getItem('peppa_overdrive_rp');
+  return saved ? parseInt(saved, 10) : 0;
+}
+
+function saveRP(rp) {
+  localStorage.setItem('peppa_overdrive_rp', rp.toString());
+}
+
 const GAME_DURATION = 20;
 const GRASS_TOP = 0.35;
 const PEPPA_W = 100;
@@ -385,6 +463,7 @@ let state = {
   timeLeft: GAME_DURATION,
   peppaSelected: false,
   running: false,
+  rp: loadRP(),
   timerInterval: null,
   hazardInterval: null,
 };
@@ -401,29 +480,35 @@ const hintEl = document.getElementById('hint');
 const startScreen = document.getElementById('start-screen');
 const endScreen = document.getElementById('end-screen');
 
+function updateRankUI() {
+  const rank = getRankFromRP(state.rp);
+  
+  // HUD update
+  document.getElementById('hud-rank-icon').innerHTML = rank.icon;
+  document.getElementById('hud-rank-title').textContent = `${rank.name} (${state.rp} RP)`;
+  document.getElementById('hud-rank-title').style.color = rank.color;
+
+  // Start Overlay update
+  document.getElementById('start-rank-icon').innerHTML = rank.icon;
+  document.getElementById('start-rank-title').textContent = `CURRENT RANK: ${rank.name} (${state.rp} RP)`;
+  document.getElementById('start-rank-title').style.color = rank.color;
+}
+
 function createNeonPeppaSVG() {
   return `<svg width="100" height="140" viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg">
-    <!-- Neon Cyber Head -->
     <ellipse cx="50" cy="38" rx="32" ry="30" fill="#ff007f" stroke="#00f0ff" stroke-width="3"/>
     <ellipse cx="50" cy="48" rx="14" ry="10" fill="#ff8c00" stroke="#fff" stroke-width="2"/>
     <circle cx="45" cy="48" r="3" fill="#00f0ff"/>
     <circle cx="55" cy="48" r="3" fill="#00f0ff"/>
-    <!-- Cyber Visor Eyes -->
     <rect x="30" y="26" width="40" height="12" rx="6" fill="#00f0ff" stroke="#fff" stroke-width="2"/>
-    <!-- Cheeks -->
     <ellipse cx="28" cy="42" rx="6" ry="4" fill="#ffe600"/>
     <ellipse cx="72" cy="42" rx="6" ry="4" fill="#ffe600"/>
-    <!-- Glowing Smile -->
     <path d="M 40 56 Q 50 64 60 56" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/>
-    <!-- Cyber Ears -->
     <ellipse cx="30" cy="12" rx="8" ry="12" fill="#ff007f" stroke="#00f0ff" stroke-width="2"/>
     <ellipse cx="70" cy="12" rx="8" ry="12" fill="#ff007f" stroke="#00f0ff" stroke-width="2"/>
-    <!-- Cyber Suit Dress -->
     <path d="M 30 65 Q 28 90 35 105 L 65 105 Q 72 90 70 65 Z" fill="#7928ca" stroke="#ff007f" stroke-width="3"/>
-    <!-- Glowing Arms -->
     <line x1="30" y1="75" x2="10" y2="85" stroke="#00f0ff" stroke-width="6" stroke-linecap="round"/>
     <line x1="70" y1="75" x2="90" y2="85" stroke="#00f0ff" stroke-width="6" stroke-linecap="round"/>
-    <!-- Legs & Shoes -->
     <line x1="40" y1="105" x2="38" y2="125" stroke="#ff007f" stroke-width="6" stroke-linecap="round"/>
     <line x1="60" y1="105" x2="62" y2="125" stroke="#ff007f" stroke-width="6" stroke-linecap="round"/>
     <ellipse cx="36" cy="128" rx="10" ry="6" fill="#00f0ff"/>
@@ -666,6 +751,7 @@ function startGame() {
   spawnHazards();
   startTimer();
   updateHint();
+  updateRankUI();
 }
 
 function endGame() {
@@ -674,21 +760,49 @@ function endGame() {
   state.running = false;
   hintEl.classList.add('hidden');
 
+  const oldRank = getRankFromRP(state.rp);
+  
+  // Calculate RP delta based on match performance (Target score benchmark: 1500)
+  let rpChange = Math.floor((state.score - 1200) / 10);
+  if (state.score === 0) rpChange = -50; // Penalty for zero score
+  
+  state.rp = Math.max(0, state.rp + rpChange);
+  saveRP(state.rp);
+
+  const newRank = getRankFromRP(state.rp);
+
   const finalScoreEl = document.getElementById('final-score');
+  const rpChangeEl = document.getElementById('rp-change-text');
+  const endRankTitleEl = document.getElementById('end-rank-title');
+  const endRankIconEl = document.getElementById('end-rank-icon');
   const msgEl = document.getElementById('end-message');
 
   finalScoreEl.textContent = state.score;
+  endRankIconEl.innerHTML = newRank.icon;
+  endRankTitleEl.textContent = `RANK: ${newRank.name} (${state.rp} RP)`;
+  endRankTitleEl.style.color = newRank.color;
 
-  if (state.score >= 3000) {
-    msgEl.textContent = 'RANK: OVERDRIVE GODLIKE!';
-  } else if (state.score >= 1800) {
-    msgEl.textContent = 'RANK: CYBER SPLASHER PRO!';
-  } else if (state.score >= 1000) {
-    msgEl.textContent = 'RANK: FAST SPLASHER!';
+  if (rpChange >= 0) {
+    let rankUpText = (newRank.name !== oldRank.name) ? " — RANK UP!" : "";
+    rpChangeEl.textContent = `+${rpChange} RP${rankUpText}`;
+    rpChangeEl.className = "rp-change rp-gain";
   } else {
-    msgEl.textContent = 'RANK: NEEDS MORE SPEED!';
+    let rankDownText = (newRank.name !== oldRank.name) ? " — DEMOTED!" : "";
+    rpChangeEl.textContent = `${rpChange} RP${rankDownText}`;
+    rpChangeEl.className = "rp-change rp-loss";
   }
 
+  if (state.score >= 3000) {
+    msgEl.textContent = 'PERFORMANCE: GODLIKE OVERDRIVE!';
+  } else if (state.score >= 1800) {
+    msgEl.textContent = 'PERFORMANCE: CYBER PRO!';
+  } else if (state.score >= 1000) {
+    msgEl.textContent = 'PERFORMANCE: SOLID!';
+  } else {
+    msgEl.textContent = 'PERFORMANCE: NEEDS IMPROVEMENT!';
+  }
+
+  updateRankUI();
   endScreen.classList.remove('hidden');
 }
 
@@ -703,6 +817,9 @@ container.addEventListener('click', () => {
 
 document.getElementById('start-btn').addEventListener('click', startGame);
 document.getElementById('restart-btn').addEventListener('click', startGame);
+
+// Initialize initial rank UI display on page load
+updateRankUI();
 </script>
 </body>
 </html>
