@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PEPPA PIG: ULTIMATE NEON OVERDRIVE!</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Press+Start+2P&display=swap');
+
+  body {
+    overflow: hidden;
+    font-family: 'Orbitron', sans-serif;
+    user-select: none;
+    -webkit-user-select: none;
+    background: #050510;
+    color: #fff;
+  }
+
+  #game-container {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    background: radial-gradient(circle at 50% 30%, #1a0826 0%, #08020f 60%, #000000 100%);
+    cursor: crosshair;
+    overflow: hidden;
+  }
+
+  /* Screen shake class */
+  .shake {
+    animation: screen-shake 0.25s ease-in-out infinite;
+  }
+
+  @keyframes screen-shake {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    20% { transform: translate(-6px, 5px) rotate(-1deg); }
+    40% { transform: translate(6px, -4px) rotate(1deg); }
+    60% { transform: translate(-5px, -3px) rotate(-0.5deg); }
+    80% { transform: translate(5px, 6px) rotate(0.5deg); }
+    100% { transform: translate(0, 0) rotate(0deg); }
+  }
+
+  /* Neon Sun Grid */
+  .sun {
+    position: absolute;
+    top: 20px;
+    right: 50%;
+    transform: translateX(50%);
+    width: 140px;
+    height: 140px;
+    background: linear-gradient(180deg, #ff007f 0%, #ff8c00 100%);
+    border-radius: 50%;
+    box-shadow: 0 0 50px #ff007f, 0 0 100px #ff8c00, inset 0 0 20px #fff;
+    opacity: 0.85;
+  }
+
+  /* Cyber Grid Ground */
+  .grid-floor {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 60%;
+    background: linear-gradient(0deg, rgba(255, 0, 128, 0.15) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 240, 255, 0.15) 1px, transparent 1px);
+    background-size: 50px 50px;
+    perspective: 500px;
+    border-top: 2px solid #00f0ff;
+    box-shadow: 0 -10px 30px rgba(0, 240, 255, 0.4);
+  }
+
+  /* Neon Cyber Clouds */
+  .cloud {
+    position: absolute;
+    background: rgba(0, 240, 255, 0.2);
+    border: 2px solid #00f0ff;
+    border-radius: 50px;
+    box-shadow: 0 0 15px #00f0ff;
+  }
+  .cloud-1 { top: 40px; left: 5%; width: 140px; height: 35px; animation: float 12s ease-in-out infinite; }
+  .cloud-2 { top: 80px; left: 70%; width: 180px; height: 45px; animation: float 15s ease-in-out infinite reverse; }
+
+  @keyframes float {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(40px); }
+  }
+
+  /* Neon Peppa Pig */
+  .peppa {
+    position: absolute;
+    cursor: pointer;
+    transition: left 0.15s linear, top 0.15s linear;
+    z-index: 20;
+    filter: drop-shadow(0 0 10px #ff007f);
+  }
+  .peppa.selected {
+    filter: drop-shadow(0 0 25px #00f0ff) drop-shadow(0 0 45px #00f0ff);
+    animation: peppa-hyper 0.15s infinite alternate;
+  }
+  .peppa.jumping {
+    transition: left 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), top 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 30;
+  }
+  @keyframes peppa-hyper {
+    0% { transform: scale(1) rotate(-3deg); }
+    100% { transform: scale(1.15) rotate(3deg); }
+  }
+
+  /* Muddy Puddles (Plasma Pools) */
+  .puddle {
+    position: absolute;
+    cursor: pointer;
+    z-index: 10;
+    transition: transform 0.1s;
+    filter: drop-shadow(0 0 12px #ff8c00);
+  }
+  .puddle:hover {
+    transform: scale(1.2) rotate(2deg);
+    filter: drop-shadow(0 0 25px #ff007f);
+  }
+  .puddle.splash {
+    animation: puddle-implode 0.3s ease-out;
+  }
+  @keyframes puddle-implode {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.8) rotate(15deg); }
+    100% { transform: scale(0); }
+  }
+
+  /* Laser Hazards (Enemies) */
+  .hazard {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    background: radial-gradient(circle, #ff003c 20%, #700018 80%);
+    border: 3px solid #ff003c;
+    border-radius: 50%;
+    box-shadow: 0 0 20px #ff003c, inset 0 0 15px #fff;
+    z-index: 15;
+    animation: hazard-spin 1s linear infinite;
+    cursor: not-allowed;
+  }
+  @keyframes hazard-spin {
+    0% { transform: rotate(0deg) scale(0.9); }
+    50% { transform: rotate(180deg) scale(1.1); }
+    100% { transform: rotate(360deg) scale(0.9); }
+  }
+
+  /* Explosive Particles */
+  .particle {
+    position: absolute;
+    pointer-events: none;
+    z-index: 40;
+    border-radius: 50%;
+    animation: particle-burst 0.5s ease-out forwards;
+  }
+  @keyframes particle-burst {
+    0% { opacity: 1; transform: translate(0, 0) scale(1); }
+    100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0.1); }
+  }
+
+  /* Explosive Shockwaves */
+  .shockwave {
+    position: absolute;
+    border-radius: 50%;
+    border: 4px solid #00f0ff;
+    pointer-events: none;
+    z-index: 35;
+    animation: wave-expand 0.4s ease-out forwards;
+  }
+  @keyframes wave-expand {
+    0% { width: 10px; height: 10px; opacity: 1; transform: translate(-50%, -50%); }
+    100% { width: 250px; height: 250px; opacity: 0; transform: translate(-50%, -50%); }
+  }
+
+  /* Floating Neon Text / Score */
+  .score-popup {
+    position: absolute;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 26px;
+    font-weight: 900;
+    color: #00f0ff;
+    text-shadow: 0 0 10px #00f0ff, 0 0 20px #ff007f, 3px 3px 0 #000;
+    pointer-events: none;
+    z-index: 50;
+    animation: neon-rise 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  }
+  @keyframes neon-rise {
+    0% { opacity: 1; transform: translateY(0) scale(0.5); }
+    50% { transform: translateY(-40px) scale(1.4); }
+    100% { opacity: 0; transform: translateY(-80px) scale(1); }
+  }
+
+  /* HUD Styling */
+  .hud {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    z-index: 60;
+  }
+  .hud-box {
+    background: rgba(10, 5, 25, 0.8);
+    border: 2px solid #00f0ff;
+    border-radius: 12px;
+    padding: 12px 28px;
+    font-size: 22px;
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 0 0 10px #00f0ff;
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+    letter-spacing: 2px;
+  }
+  .timer-box.urgent {
+    color: #ff003c;
+    border-color: #ff003c;
+    text-shadow: 0 0 15px #ff003c;
+    animation: neon-pulse 0.2s infinite alternate;
+  }
+  @keyframes neon-pulse {
+    0% { transform: scale(1); box-shadow: 0 0 20px #ff003c; }
+    100% { transform: scale(1.1); box-shadow: 0 0 40px #ff003c; }
+  }
+
+  /* Combo Counter */
+  .combo-box {
+    color: #ffe600;
+    border-color: #ffe600;
+    text-shadow: 0 0 10px #ffe600;
+  }
+
+  /* Instruction hint */
+  .hint {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(10, 5, 25, 0.9);
+    border: 2px solid #ff007f;
+    border-radius: 30px;
+    padding: 12px 35px;
+    font-size: 18px;
+    color: #ff007f;
+    font-weight: 900;
+    z-index: 60;
+    box-shadow: 0 0 25px rgba(255, 0, 127, 0.5);
+    text-shadow: 0 0 8px #ff007f;
+    letter-spacing: 1.5px;
+    animation: hint-glow 0.8s ease-in-out infinite alternate;
+  }
+  @keyframes hint-glow {
+    0% { box-shadow: 0 0 10px #ff007f; }
+    100% { box-shadow: 0 0 30px #ff007f, 0 0 50px #ff007f; }
+  }
+
+  /* Cyber Screens Overlay */
+  .screen-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(5, 2, 12, 0.88);
+    backdrop-filter: blur(8px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+  }
+  .screen-box {
+    background: rgba(15, 8, 30, 0.95);
+    border: 3px solid #00f0ff;
+    border-radius: 20px;
+    padding: 40px 60px;
+    text-align: center;
+    box-shadow: 0 0 50px #00f0ff, inset 0 0 20px rgba(0, 240, 255, 0.3);
+    max-width: 600px;
+  }
+  .screen-box h1 {
+    color: #ff007f;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 26px;
+    margin-bottom: 15px;
+    text-shadow: 0 0 15px #ff007f, 3px 3px 0 #000;
+    line-height: 1.4;
+  }
+  .screen-box h2 {
+    color: #00f0ff;
+    font-size: 20px;
+    margin-bottom: 20px;
+    text-shadow: 0 0 10px #00f0ff;
+  }
+  .screen-box p {
+    color: #a0a0d0;
+    font-size: 16px;
+    margin-bottom: 25px;
+    line-height: 1.6;
+  }
+  .final-score {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 48px;
+    color: #ffe600;
+    text-shadow: 0 0 20px #ffe600, 4px 4px 0 #000;
+    margin: 20px 0;
+  }
+  .btn {
+    background: linear-gradient(45deg, #ff007f, #7928ca);
+    color: white;
+    border: none;
+    padding: 18px 50px;
+    font-size: 22px;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 0 25px #ff007f;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+  .btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 45px #ff007f, 0 0 70px #ff007f;
+  }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div id="game-container">
+  <!-- Cyber Environment Background -->
+  <div class="sun"></div>
+  <div class="cloud cloud-1"></div>
+  <div class="cloud cloud-2"></div>
+  <div class="grid-floor"></div>
+
+  <!-- HUD -->
+  <div class="hud">
+    <div class="hud-box timer-box" id="timer">TIME: 20</div>
+    <div class="hud-box combo-box" id="combo">COMBO: x1</div>
+    <div class="hud-box score-box" id="score">SCORE: 0</div>
+  </div>
+
+  <!-- Hint Indicator -->
+  <div class="hint" id="hint">SELECT PEPPA TO INITIATE OVERDRIVE!</div>
+
+  <!-- Dynamic Game Containers -->
+  <div id="peppa-container"></div>
+  <div id="puddle-container"></div>
+  <div id="hazard-container"></div>
+  <div id="effects-container"></div>
+
+  <!-- Start Overlay Screen -->
+  <div class="screen-overlay" id="start-screen">
+    <div class="screen-box">
+      <h1>PEPPA PIG:<br>NEON OVERDRIVE</h1>
+      <h2>HIGH-SPEED MUDDY PUDDLES</h2>
+      <p>⚡ Tap Peppa, then target glowing plasma pools rapidly!<br>⚡ Avoid rotating red hazards!<br>⚡ Build combo streak multipliers for massive points!</p>
+      <button class="btn" id="start-btn">ENGAGE!</button>
+    </div>
+  </div>
+
+  <!-- Game Over Screen -->
+  <div class="screen-overlay hidden" id="end-screen">
+    <div class="screen-box">
+      <h1>OVERDRIVE COMPLETE</h1>
+      <div class="final-score" id="final-score">0</div>
+      <p id="end-message">SYSTEM PERFORMANCE EVALUATED</p>
+      <button class="btn" id="restart-btn">REBOOT!</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const GAME_DURATION = 20;
+const GRASS_TOP = 0.35;
+const PEPPA_W = 100;
+const PEPPA_H = 140;
+const PUDDLE_COUNT = 5;
+const HAZARD_COUNT = 3;
+
+let state = {
+  score: 0,
+  combo: 1,
+  timeLeft: GAME_DURATION,
+  peppaSelected: false,
+  running: false,
+  timerInterval: null,
+  hazardInterval: null,
+};
+
+const container = document.getElementById('game-container');
+const peppaContainer = document.getElementById('peppa-container');
+const puddleContainer = document.getElementById('puddle-container');
+const hazardContainer = document.getElementById('hazard-container');
+const effectsContainer = document.getElementById('effects-container');
+const timerEl = document.getElementById('timer');
+const scoreEl = document.getElementById('score');
+const comboEl = document.getElementById('combo');
+const hintEl = document.getElementById('hint');
+const startScreen = document.getElementById('start-screen');
+const endScreen = document.getElementById('end-screen');
+
+function createNeonPeppaSVG() {
+  return `<svg width="100" height="140" viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg">
+    <!-- Neon Cyber Head -->
+    <ellipse cx="50" cy="38" rx="32" ry="30" fill="#ff007f" stroke="#00f0ff" stroke-width="3"/>
+    <ellipse cx="50" cy="48" rx="14" ry="10" fill="#ff8c00" stroke="#fff" stroke-width="2"/>
+    <circle cx="45" cy="48" r="3" fill="#00f0ff"/>
+    <circle cx="55" cy="48" r="3" fill="#00f0ff"/>
+    <!-- Cyber Visor Eyes -->
+    <rect x="30" y="26" width="40" height="12" rx="6" fill="#00f0ff" stroke="#fff" stroke-width="2"/>
+    <!-- Cheeks -->
+    <ellipse cx="28" cy="42" rx="6" ry="4" fill="#ffe600"/>
+    <ellipse cx="72" cy="42" rx="6" ry="4" fill="#ffe600"/>
+    <!-- Glowing Smile -->
+    <path d="M 40 56 Q 50 64 60 56" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <!-- Cyber Ears -->
+    <ellipse cx="30" cy="12" rx="8" ry="12" fill="#ff007f" stroke="#00f0ff" stroke-width="2"/>
+    <ellipse cx="70" cy="12" rx="8" ry="12" fill="#ff007f" stroke="#00f0ff" stroke-width="2"/>
+    <!-- Cyber Suit Dress -->
+    <path d="M 30 65 Q 28 90 35 105 L 65 105 Q 72 90 70 65 Z" fill="#7928ca" stroke="#ff007f" stroke-width="3"/>
+    <!-- Glowing Arms -->
+    <line x1="30" y1="75" x2="10" y2="85" stroke="#00f0ff" stroke-width="6" stroke-linecap="round"/>
+    <line x1="70" y1="75" x2="90" y2="85" stroke="#00f0ff" stroke-width="6" stroke-linecap="round"/>
+    <!-- Legs & Shoes -->
+    <line x1="40" y1="105" x2="38" y2="125" stroke="#ff007f" stroke-width="6" stroke-linecap="round"/>
+    <line x1="60" y1="105" x2="62" y2="125" stroke="#ff007f" stroke-width="6" stroke-linecap="round"/>
+    <ellipse cx="36" cy="128" rx="10" ry="6" fill="#00f0ff"/>
+    <ellipse cx="64" cy="128" rx="10" ry="6" fill="#00f0ff"/>
+  </svg>`;
+}
+
+function createNeonPuddleSVG(w, h) {
+  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="${w/2}" cy="${h/2}" rx="${w/2 - 2}" ry="${h/2 - 2}" fill="#ff8c00" opacity="0.8" stroke="#ffe600" stroke-width="2"/>
+    <ellipse cx="${w/2}" cy="${h/2}" rx="${w/2 - 10}" ry="${h/2 - 6}" fill="#ff007f" opacity="0.6"/>
+    <ellipse cx="${w/2 - 8}" cy="${h/2 - 4}" rx="12" ry="6" fill="#00f0ff" opacity="0.5"/>
+  </svg>`;
+}
+
+function randomInRange(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+function triggerScreenShake() {
+  container.classList.add('shake');
+  setTimeout(() => container.classList.remove('shake'), 250);
+}
+
+function getGrassArea() {
+  const cw = container.clientWidth;
+  const ch = container.clientHeight;
+  return { x: 50, y: ch * GRASS_TOP + 30, w: cw - 100, h: ch * (1 - GRASS_TOP) - 80 };
+}
+
+function spawnPeppa() {
+  peppaContainer.innerHTML = '';
+  const area = getGrassArea();
+  const peppa = document.createElement('div');
+  peppa.className = 'peppa';
+  peppa.id = 'peppa';
+  peppa.innerHTML = createNeonPeppaSVG();
+  peppa.style.left = randomInRange(area.x, area.x + area.w - PEPPA_W) + 'px';
+  peppa.style.top = randomInRange(area.y, area.y + area.h - PEPPA_H) + 'px';
+  peppa.addEventListener('click', onPeppaClick);
+  peppaContainer.appendChild(peppa);
+  state.peppaSelected = false;
+  updateHint();
+}
+
+function spawnPuddles() {
+  puddleContainer.innerHTML = '';
+  const area = getGrassArea();
+  for (let i = 0; i < PUDDLE_COUNT; i++) {
+    const w = randomInRange(80, 120);
+    const h = randomInRange(40, 60);
+    const puddle = document.createElement('div');
+    puddle.className = 'puddle';
+    puddle.innerHTML = createNeonPuddleSVG(w, h);
+    puddle.style.width = w + 'px';
+    puddle.style.height = h + 'px';
+    puddle.style.left = randomInRange(area.x, area.x + area.w - w) + 'px';
+    puddle.style.top = randomInRange(area.y, area.y + area.h - h) + 'px';
+    puddle.addEventListener('click', onPuddleClick);
+    puddleContainer.appendChild(puddle);
+  }
+}
+
+function spawnHazards() {
+  hazardContainer.innerHTML = '';
+  const area = getGrassArea();
+  for (let i = 0; i < HAZARD_COUNT; i++) {
+    const hz = document.createElement('div');
+    hz.className = 'hazard';
+    hz.style.left = randomInRange(area.x, area.x + area.w - 60) + 'px';
+    hz.style.top = randomInRange(area.y, area.y + area.h - 60) + 'px';
+    hz.addEventListener('click', onHazardClick);
+    hazardContainer.appendChild(hz);
+  }
+}
+
+function updateHazards() {
+  const area = getGrassArea();
+  const hazards = document.querySelectorAll('.hazard');
+  hazards.forEach(hz => {
+    hz.style.left = randomInRange(area.x, area.x + area.w - 60) + 'px';
+    hz.style.top = randomInRange(area.y, area.y + area.h - 60) + 'px';
+  });
+}
+
+function onHazardClick(e) {
+  if (!state.running) return;
+  e.stopPropagation();
+  triggerScreenShake();
+  state.combo = 1;
+  comboEl.textContent = 'COMBO: x1';
+  showNeonText(e.clientX, e.clientY, 'HAZARD HIT! -500', '#ff003c');
+  state.score = Math.max(0, state.score - 500);
+  scoreEl.textContent = 'SCORE: ' + state.score;
+}
+
+function onPeppaClick(e) {
+  if (!state.running) return;
+  e.stopPropagation();
+  const peppa = document.getElementById('peppa');
+  if (!peppa) return;
+  state.peppaSelected = true;
+  peppa.classList.add('selected');
+  createExplosion(e.clientX, e.clientY, '#00f0ff', 12);
+  updateHint();
+}
+
+function onPuddleClick(e) {
+  if (!state.running || !state.peppaSelected) return;
+  e.stopPropagation();
+  const peppa = document.getElementById('peppa');
+  if (!peppa) return;
+
+  const puddle = e.currentTarget;
+  const puddleRect = puddle.getBoundingClientRect();
+  const containerRect = container.getBoundingClientRect();
+  const targetX = puddleRect.left - containerRect.left + puddleRect.width / 2 - PEPPA_W / 2;
+  const targetY = puddleRect.top - containerRect.top - PEPPA_H + puddleRect.height / 2;
+
+  peppa.classList.remove('selected');
+  peppa.classList.add('jumping');
+  peppa.style.left = targetX + 'px';
+  peppa.style.top = targetY + 'px';
+  state.peppaSelected = false;
+
+  setTimeout(() => {
+    puddle.classList.add('splash');
+    triggerScreenShake();
+    
+    const cx = puddleRect.left - containerRect.left + puddleRect.width / 2;
+    const cy = puddleRect.top - containerRect.top + puddleRect.height / 2;
+    
+    createExplosion(cx, cy, '#ff007f', 25);
+    createShockwave(cx, cy);
+
+    const pts = 100 * state.combo;
+    state.score += pts;
+    scoreEl.textContent = 'SCORE: ' + state.score;
+
+    showNeonText(cx, cy - 20, `+${pts}!`, '#ffe600');
+
+    state.combo++;
+    comboEl.textContent = 'COMBO: x' + state.combo;
+
+    setTimeout(() => {
+      spawnPeppa();
+      spawnPuddles();
+    }, 150);
+  }, 150);
+
+  updateHint();
+}
+
+function createExplosion(x, y, color, count) {
+  for (let i = 0; i < count; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = randomInRange(6, 16);
+    const angle = Math.random() * Math.PI * 2;
+    const dist = randomInRange(40, 120);
+
+    p.style.width = size + 'px';
+    p.style.height = size + 'px';
+    p.style.left = x + 'px';
+    p.style.top = y + 'px';
+    p.style.background = color;
+    p.style.boxShadow = `0 0 10px ${color}, 0 0 20px ${color}`;
+    p.style.setProperty('--dx', Math.cos(angle) * dist + 'px');
+    p.style.setProperty('--dy', Math.sin(angle) * dist + 'px');
+
+    effectsContainer.appendChild(p);
+    setTimeout(() => p.remove(), 500);
+  }
+}
+
+function createShockwave(x, y) {
+  const wave = document.createElement('div');
+  wave.className = 'shockwave';
+  wave.style.left = x + 'px';
+  wave.style.top = y + 'px';
+  effectsContainer.appendChild(wave);
+  setTimeout(() => wave.remove(), 400);
+}
+
+function showNeonText(x, y, text, color) {
+  const pop = document.createElement('div');
+  pop.className = 'score-popup';
+  pop.textContent = text;
+  pop.style.left = (x - 40) + 'px';
+  pop.style.top = y + 'px';
+  if (color) pop.style.color = color;
+  effectsContainer.appendChild(pop);
+  setTimeout(() => pop.remove(), 700);
+}
+
+function updateHint() {
+  if (!state.running) {
+    hintEl.classList.add('hidden');
+    return;
+  }
+  hintEl.classList.remove('hidden');
+  if (!state.peppaSelected) {
+    hintEl.textContent = 'TARGET PEPPA NOW!';
+  } else {
+    hintEl.textContent = 'STRIKE PLASMA PUDDLE!';
+  }
+}
+
+function startTimer() {
+  state.timeLeft = GAME_DURATION;
+  timerEl.textContent = 'TIME: ' + state.timeLeft;
+  timerEl.classList.remove('urgent');
+
+  state.timerInterval = setInterval(() => {
+    state.timeLeft--;
+    timerEl.textContent = 'TIME: ' + state.timeLeft;
+    if (state.timeLeft <= 5) {
+      timerEl.classList.add('urgent');
+    }
+    if (state.timeLeft <= 0) {
+      endGame();
+    }
+  }, 1000);
+
+  state.hazardInterval = setInterval(updateHazards, 1800);
+}
+
+function startGame() {
+  state.score = 0;
+  state.combo = 1;
+  state.peppaSelected = false;
+  state.running = true;
+  scoreEl.textContent = 'SCORE: 0';
+  comboEl.textContent = 'COMBO: x1';
+  startScreen.classList.add('hidden');
+  endScreen.classList.add('hidden');
+  effectsContainer.innerHTML = '';
+  spawnPeppa();
+  spawnPuddles();
+  spawnHazards();
+  startTimer();
+  updateHint();
+}
+
+function endGame() {
+  clearInterval(state.timerInterval);
+  clearInterval(state.hazardInterval);
+  state.running = false;
+  hintEl.classList.add('hidden');
+
+  const finalScoreEl = document.getElementById('final-score');
+  const msgEl = document.getElementById('end-message');
+
+  finalScoreEl.textContent = state.score;
+
+  if (state.score >= 3000) {
+    msgEl.textContent = 'RANK: OVERDRIVE GODLIKE!';
+  } else if (state.score >= 1800) {
+    msgEl.textContent = 'RANK: CYBER SPLASHER PRO!';
+  } else if (state.score >= 1000) {
+    msgEl.textContent = 'RANK: FAST SPLASHER!';
+  } else {
+    msgEl.textContent = 'RANK: NEEDS MORE SPEED!';
+  }
+
+  endScreen.classList.remove('hidden');
+}
+
+container.addEventListener('click', () => {
+  if (state.peppaSelected) {
+    state.peppaSelected = false;
+    const peppa = document.getElementById('peppa');
+    if (peppa) peppa.classList.remove('selected');
+    updateHint();
+  }
+});
+
+document.getElementById('start-btn').addEventListener('click', startGame);
+document.getElementById('restart-btn').addEventListener('click', startGame);
+</script>
+</body>
+</html>
